@@ -1,11 +1,11 @@
 import os
-import sys
 import hashlib
 import socket
 import json
 import requests
 
-URL="http://localhost:8080/data"
+#URL="http://localhost:8080/data"
+URL = None
 
 def hostname():
     return socket.gethostname() 
@@ -50,8 +50,8 @@ def scan(path=None):
     
             if os.path.isfile(fullpath):
                 data = {'host':hn, 
+                        'hash':hashfile(fullpath),
                         'file':fullpath,
-                        'hash':hashfile(fullpath)
                         }
                 
                 logresult(data)
