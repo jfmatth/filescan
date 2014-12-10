@@ -1,0 +1,5 @@
+*.csv
+activate.bat
+vWB/
+.project
+.pydevproject
