@@ -12,6 +12,7 @@ def writedata():
     try:
         csvwriter.writerow(request.json)
     except:
-        pass
+        print "error on writer"
 
-run(server="tornado")
+#run(server="tornado")
+run(host='localhost', port=8080)

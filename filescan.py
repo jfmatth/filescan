@@ -3,12 +3,12 @@ import hashlib
 import socket
 import json
 import requests
+import argparse
+from argparse import Action
 
-#URL="http://localhost:8080/data"
-URL = None
 
 def hostname():
-    return socket.gethostname() 
+    return socket.gethostname()
 
 def hashfile(afile, hasher=hashlib.md5(), blocksize=65536):
 
@@ -23,25 +23,27 @@ def hashfile(afile, hasher=hashlib.md5(), blocksize=65536):
     return hasher.hexdigest()
 
 
-def logresult(data=None):
+def logresult(data=None, url=None):
     if data and type(data) == dict:
         # print it out and post to server
         
-        if URL:
+        if url:
             try:
                 headers = {'Content-Type': 'application/json'}
-                requests.post(URL, data=json.dumps(data), headers=headers)
+                requests.post(url, data=json.dumps(data), headers=headers)
                 print("."),
             except:
                 pass
         else:
             print data
         
-def scan(path=None):
+def scan(url=None, path=None):
     hn = hostname()
     
     if path == None:
         sp = os.path.dirname(os.path.abspath(__file__))
+    else:
+        sp = os.path.abspath(path)
         
     for root, dirs, files in os.walk(sp):
                     
@@ -50,13 +52,21 @@ def scan(path=None):
     
             if os.path.isfile(fullpath):
                 data = {'host':hn, 
-                        'hash':hashfile(fullpath),
                         'file':fullpath,
+                        'hash':hashfile(fullpath),
                         }
                 
-                logresult(data)
+                logresult(data, url)
                 
         
 if __name__== "__main__":
-    scan()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-U", "--url", help="URL of http server receiving data", type=str)
+    parser.add_argument("-P", "--path", help="Path to scan", type=str)
+    
+    args = parser.parse_args()
+    print args
+    
+    scan(url=args.url, path=args.path)
+
     
