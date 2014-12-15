@@ -30,8 +30,8 @@ def logresult(data=None, url=None):
         if url:
             try:
                 headers = {'Content-Type': 'application/json'}
-                requests.post(url, data=json.dumps(data), headers=headers)
-                print("."),
+                r = requests.post(url, data=json.dumps(data), headers=headers)
+                print("%s" % r.status_code),
             except:
                 pass
         else:
@@ -51,12 +51,15 @@ def scan(url=None, path=None):
             fullpath = os.path.normcase(os.path.normpath(os.path.join(root,f) ) ) 
     
             if os.path.isfile(fullpath):
-                data = {'host':hn, 
-                        'file':fullpath,
-                        'hash':hashfile(fullpath),
-                        }
-                
-                logresult(data, url)
+                try:
+                    data = {'host':hn, 
+                            'file':fullpath,
+                            'hash':hashfile(fullpath),
+                            }
+                    
+                    logresult(data, url)
+                except:
+                    print "exception"
                 
         
 if __name__== "__main__":
