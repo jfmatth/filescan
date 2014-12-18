@@ -6,6 +6,7 @@ import requests
 import argparse
 from argparse import Action
 
+from filescan_peewee import File, db
 
 def hostname():
     return socket.gethostname()
@@ -28,12 +29,16 @@ def logresult(data=None, url=None):
         # print it out and post to server
         
         if url:
-            try:
-                headers = {'Content-Type': 'application/json'}
-                r = requests.post(url, data=json.dumps(data), headers=headers)
-                print("%s" % r.status_code),
-            except:
-                pass
+            if url == "db":
+                File.create(**data)
+                print ".",
+            else:
+                try:
+                    headers = {'Content-Type': 'application/json'}
+                    r = requests.post(url, data=json.dumps(data), headers=headers)
+                    print("%s" % r.status_code),
+                except:
+                    pass
         else:
             print data
         
@@ -58,9 +63,14 @@ def scan(url=None, path=None):
                             }
                     
                     logresult(data, url)
-                except:
-                    print "exception"
+                    
+                except KeyboardInterrupt:
+                    raise
                 
+                except:
+                    print "exception %s" % fullpath
+                
+        
         
 if __name__== "__main__":
     parser = argparse.ArgumentParser()
