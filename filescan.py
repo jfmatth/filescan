@@ -6,23 +6,23 @@ import requests
 import argparse
 from argparse import Action
 
-from filescan_peewee import File, db
+from filescan_peewee import File
 
 def hostname():
     return socket.gethostname()
 
-def hashfile(afile, hasher=hashlib.md5(), blocksize=65536):
-
-    f = open(afile,"rb")
+def hashfile(afile, blocksize=8192):
+    hasher=hashlib.md5()
     
-    buf = f.read(blocksize)
-    while len(buf) > 0:
-        hasher.update(buf)
-        buf = f.read(blocksize)
-
-    f = None
+    file = open(afile, "rb")
+    while True:
+        data = file.read(blocksize)
+        if not data:
+            break
+        hasher.update(data)
+    
+    file.close()
     return hasher.hexdigest()
-
 
 def logresult(data=None, url=None):
     if data and type(data) == dict:
@@ -60,6 +60,7 @@ def scan(url=None, path=None):
                     data = {'host':hn, 
                             'file':fullpath,
                             'hash':hashfile(fullpath),
+#                            'hash':md5_for_file(fullpath),
                             }
                     
                     logresult(data, url)
@@ -68,7 +69,7 @@ def scan(url=None, path=None):
                     raise
                 
                 except:
-                    print "exception %s" % fullpath
+                    raise
                 
         
         
