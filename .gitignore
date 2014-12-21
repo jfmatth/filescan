@@ -3,3 +3,7 @@ activate.bat
 vWB/
 .project
 .pydevproject
+build/
+dist/
+*.db
+*.spec

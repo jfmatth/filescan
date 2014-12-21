@@ -6,7 +6,7 @@ import requests
 import argparse
 from argparse import Action
 
-from filescan_peewee import File
+from db import File, db
 
 def hostname():
     return socket.gethostname()
@@ -30,8 +30,12 @@ def logresult(data=None, url=None):
         
         if url:
             if url == "db":
-                File.create(**data)
-                print ".",
+                try:
+                    File.create(**data)
+                    print data['file']
+                except: 
+                    pass
+                    
             else:
                 try:
                     headers = {'Content-Type': 'application/json'}
@@ -60,7 +64,6 @@ def scan(url=None, path=None):
                     data = {'host':hn, 
                             'file':fullpath,
                             'hash':hashfile(fullpath),
-#                            'hash':md5_for_file(fullpath),
                             }
                     
                     logresult(data, url)
