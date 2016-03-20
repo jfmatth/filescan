@@ -1,3 +1,4 @@
+*.pyc
 *.csv
 activate.bat
 vWB/
